@@ -64,8 +64,7 @@ def clamp(number): # restrict number on value range
     
 
 Kp = 1./55000. #these values you need to set yourself
-Ki = 1./110000.
-Ki = 0.
+Ki = 1./30010000.
 Kd = 0.
 
 def PID():
@@ -77,7 +76,7 @@ def PID():
     derivative = (error - previous_error)/dt
     output = Kp*error + Ki*integral + Kd*derivative
     previous_error = error
-    #dp("force is:" + str(output))
+    dp("force is:" + str(output))
     return output	
     #wait(dt)
 
@@ -90,7 +89,9 @@ def get_angle():
     gyro = gyro_data['x']
     dt = get_time_difference_in_mili()
     angle = 0.98 *(angle+gyro*dt) + 0.02*acc # complimentary filter
-    #dp("angle is:" + str(angle-angleError))
+    dp("angle is:" + str(angle-angleError))
+    #dp("acc is:" + str(acc))
+    #dp("gyro is:" + str(gyro))
     return (angle-angleError)
 
 
@@ -127,7 +128,13 @@ except KeyboardInterrupt:
     cv2.destroyAllWindows()
     headhor.stop()
     headvert.stop()
-    GPIO.cleanup()
-    s.write("$1=0") # <- save power, by turning of wheel lock
     s.write("!\n")
+    s.readline()
+    s.write("\r\n\r\n")
+    s.readline()
+    s.write("$1=0" + '\n') # <- save power, by turning of wheel lock
+    s.readline()
+    #s.flushInput()
+    GPIO.cleanup()
+    
 

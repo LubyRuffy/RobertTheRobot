@@ -32,11 +32,11 @@ sensor = mpu6050(0x68)
 
 
 prevTime = 0
-angle = 0
-previous_error = 0
-integral = 0
+angle = 0.
+previous_error = 0.
+integral = 0.
 
-angleError = 200
+angleError = 300.
 
 ############Helper Functions & filters######### 
 
@@ -70,7 +70,7 @@ Kd = 0.
 def PID():
     global angle, integral,previous_error
 
-    error = 0 - angle
+    error = 0. - angle
     dt = get_time_difference_in_mili_PID()
     integral = integral + error*dt
     derivative = (error - previous_error)/dt
@@ -129,8 +129,6 @@ except KeyboardInterrupt:
     headhor.stop()
     headvert.stop()
     s.write("!\n")
-    s.readline()
-    s.write("\r\n\r\n")
     s.readline()
     s.write("$1=0" + '\n') # <- save power, by turning of wheel lock
     s.readline()

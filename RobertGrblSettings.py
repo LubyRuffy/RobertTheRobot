@@ -4,7 +4,7 @@ import serial
 import time
 
 # Open grbl serial port
-s = serial.Serial('/dev/ttyUSB0',115200) #might change this, but only rarely
+s = serial.Serial('/dev/ttyUSB0',115200) # serial to usb from arduino, change it if it is wrong.
 
 # Wake up grbl
 s.write("\r\n\r\n")

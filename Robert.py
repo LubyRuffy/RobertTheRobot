@@ -36,6 +36,7 @@ angle = 0.
 previous_error = 0.
 integral = 0.
 
+speedMax = 0.0025
 angleError = 300.
 
 ############Helper Functions & filters######### 
@@ -55,10 +56,12 @@ def get_time_difference_in_mili_PID():
     return float( prevTimePID - oldPrev )
 
 def clamp(number): # restrict number on value range
-    if(number > 0.01):
-        number = 0.01
-    elif(number < -0.01):
-        number = -0.01
+    if(number > speedMax):
+        number = speedMax
+    elif(number < -speedMax):
+        number = -speedMax
+    elif(number < speedMax and number > -speedMax):
+        number = 0.
     return number
         
     
@@ -74,7 +77,7 @@ def PID():
     dt = get_time_difference_in_mili_PID()
     integral = integral + error*dt
     derivative = (error - previous_error)/dt
-    output = Kp*error + Ki*integral + Kd*derivative
+    output = clamp(Kp*error + Ki*integral + Kd*derivative)
     previous_error = error
     dp("force is:" + str(output))
     return output	
@@ -128,9 +131,11 @@ except KeyboardInterrupt:
     cv2.destroyAllWindows()
     headhor.stop()
     headvert.stop()
-    s.write("!\n")
+    s.write("^X" + '\n') # <- save power, by turning of wheel lock
     s.readline()
     s.write("$1=0" + '\n') # <- save power, by turning of wheel lock
+    s.readline()
+    s.write("!\n")
     s.readline()
     #s.flushInput()
     GPIO.cleanup()

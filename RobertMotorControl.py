@@ -10,6 +10,7 @@ fd = "" #falling direction -> string, forward | backwards
 pfd = "" #previous falling direction -> string, forward | backwards
 addition = 0. #added speed from fd
 
+# example of full line: "$J=X1 Z1 1500"
 feedRate = "F1500"
 
 ############Wheels##################

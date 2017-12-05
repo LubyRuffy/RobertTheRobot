@@ -36,7 +36,8 @@ angle = 0.
 previous_error = 0.
 integral = 0.
 
-speedMax = 0.0025
+speedMax =  20#0.025
+speedMin = 0.00025
 angleError = 300.
 
 ############Helper Functions & filters######### 
@@ -60,7 +61,7 @@ def clamp(number): # restrict number on value range
         number = speedMax
     elif(number < -speedMax):
         number = -speedMax
-    elif(number < speedMax and number > -speedMax):
+    elif(number < speedMin and number > -speedMin):
         number = 0.
     return number
         
@@ -91,7 +92,7 @@ def get_angle():
 
     gyro = gyro_data['x']
     dt = get_time_difference_in_mili()
-    angle = 0.98 *(angle+gyro*dt) + 0.02*acc # complimentary filter
+    angle = (0.98 *(angle+gyro*dt)) + (0.02*acc) # complimentary filter
     dp("angle is:" + str(angle-angleError))
     #dp("acc is:" + str(acc))
     #dp("gyro is:" + str(gyro))
@@ -102,9 +103,15 @@ def balancedMotors(): #############################LOOK HERE!!!!!!!!!!##########
     ########GYRO and ACCS settings########    
     get_angle() # get current angle of robot by filter to reduce noice
     force = PID() # get current force that should be applied by using PID to reduce errors
-    
+    #print(b'^X\n')
+    #s.write(b'\x18') # <- save power, by turning of wheel lock
+    #print(s.readline())
+    #s.write("$X" + '\n')
+    #s.readline()
+    #s.write("G91" + '\n')
+    #s.readline()
     move(force) # negative is falling forward
-	
+    wait(0.5)	
 
 
 
@@ -122,8 +129,6 @@ try:
         #if ( not balancedMotors() ):
             #findBall()
             
-        
-
 except KeyboardInterrupt:
     ###########CLEANUPS############
     print("\ncleaning up")
@@ -131,11 +136,17 @@ except KeyboardInterrupt:
     cv2.destroyAllWindows()
     headhor.stop()
     headvert.stop()
-    s.write("^X" + '\n') # <- save power, by turning of wheel lock
+    
+
+    
+    #s.write("!\n")
+    
+    s.write("!" + '\n')
     s.readline()
     s.write("$1=0" + '\n') # <- save power, by turning of wheel lock
     s.readline()
-    s.write("!\n")
+    s.write(b'\x18') # <- cancel all events in buffer
+    s.write("\n")
     s.readline()
     #s.flushInput()
     GPIO.cleanup()

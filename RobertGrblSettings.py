@@ -3,6 +3,9 @@
 import serial
 import time
 
+def wait(n):
+    time.sleep(n)
+
 # Open grbl serial port
 s = serial.Serial('/dev/ttyUSB0',115200) # serial to usb from arduino, change it if it is wrong.
 
@@ -16,5 +19,4 @@ s.write("G91" + '\n')
 s.readline()
 s.write("$1=255" + '\n') # <- set to lock wheels
 s.readline()
-#s.write("$1=255")
 multiplier = 1
